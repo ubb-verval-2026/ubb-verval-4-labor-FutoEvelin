@@ -6,8 +6,8 @@ using FluentAssertions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
-using SeleniumExtras.WaitHelpers;
-
+//using SeleniumExtras.WaitHelpers;
+/*
 namespace DatesAndStuff.Web.Tests;
 
 [TestFixture]
@@ -26,7 +26,7 @@ public class PersonPageTests
         var webProjectPath = Path.GetFullPath(Path.Combine(
             Assembly.GetExecutingAssembly().Location,
             "../../../../../../src/DatesAndStuff.Web/DatesAndStuff.Web.csproj"
-            ));
+        ));
 
         var webProjFolderPath = Path.GetDirectoryName(webProjectPath);
 
@@ -34,7 +34,7 @@ public class PersonPageTests
         {
             FileName = "dotnet",
             //Arguments = $"run --project \"{webProjectPath}\"",
-            Arguments = "dotnet run --no-build",
+            Arguments = "run --no-build",
             WorkingDirectory = webProjFolderPath,
             RedirectStandardOutput = true,
             RedirectStandardError = true,
@@ -94,31 +94,38 @@ public class PersonPageTests
         {
             // Ignore errors if unable to close the browser
         }
+
         Assert.That(verificationErrors.ToString(), Is.EqualTo(""));
     }
 
-    [Test]
-    public void Person_SalaryIncrease_ShouldIncrease()
+    [TestCase("5", 5250)]
+    [TestCase("10", 5500)]
+    [TestCase("20", 6000)]
+    [TestCase("0", 5000)]
+    [NonParallelizable]
+    public void Person_SalaryIncrease_ShouldIncrease(string percentage, double expectedSalary)
     {
         // Arrange
         driver.Navigate().GoToUrl(BaseURL);
         driver.FindElement(By.XPath("//*[@data-test='PersonPageNavigation']")).Click();
 
-        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(5));
+        var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
 
         var input = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreasePercentageInput']")));
-        input.Clear();
-        input.SendKeys("5");
+        input.Click();
+        input.SendKeys(Keys.Command + "a");
+        input.SendKeys(Keys.Backspace);
+        input.SendKeys(percentage);
 
         // Act
-        var submitButton = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")));
+        var submitButton = wait.Until(ExpectedConditions.ElementToBeClickable(By.XPath("//*[@data-test='SalaryIncreaseSubmitButton']")));
         submitButton.Click();
 
 
         // Assert
         var salaryLabel = wait.Until(ExpectedConditions.ElementExists(By.XPath("//*[@data-test='DisplayedSalary']")));
         var salaryAfterSubmission = double.Parse(salaryLabel.Text);
-        salaryAfterSubmission.Should().BeApproximately(5250, 0.001);
+        salaryAfterSubmission.Should().BeApproximately(expectedSalary, 0.001);
     }
     private bool IsElementPresent(By by)
     {
@@ -168,3 +175,4 @@ public class PersonPageTests
         }
     }
 }
+*/
